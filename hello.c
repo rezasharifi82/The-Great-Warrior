@@ -7,6 +7,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <time.h>
 #include <string.h>
+#include "hash.c"
 
 void must_init(bool test, const char *description)
 {
@@ -65,6 +66,61 @@ int sugge(struct player c1, struct player c2, int nobat)
     return 0;
 }
 
+void saveprotocol(struct player a, struct player b, int map[6][6])
+{
+    FILE *castola;
+    castola = fopen("save.txt", "wt");
+    char o[40];
+    int k, temp1, temp2, temp3;
+    for (int i = 0; i < 6; i++) ///mechanism of saving map;
+    {
+        for (int j = 0; j < 6; j++)
+        {
+            k = map[i][j];
+            strcpy(o, hash(k));
+            fprintf(castola, "%s\n", o);
+        }
+    }
+
+    //////////////////player one without name
+    temp1 = a.damage;
+    strcpy(o, hash(temp1));
+    fprintf(castola, "%s\n", o);
+    temp1 = a.honnor;
+    strcpy(o, hash(temp1));
+    fprintf(castola, "%s\n", o);
+    temp1 = a.house_health;
+    strcpy(o, hash(temp1));
+    fprintf(castola, "%s\n", o);
+    temp1 = a.pox;
+    strcpy(o, hash(temp1));
+    fprintf(castola, "%s\n", o);
+    temp1 = a.poy;
+    strcpy(o, hash(temp1));
+    fprintf(castola, "%s\n", o);
+    ////////////////////player 2
+
+    temp1 = b.damage;
+    strcpy(o, hash(temp1));
+    fprintf(castola, "%s\n", o);
+    temp1 = b.honnor;
+    strcpy(o, hash(temp1));
+    fprintf(castola, "%s\n", o);
+    temp1 = b.house_health;
+    strcpy(o, hash(temp1));
+    fprintf(castola, "%s\n", o);
+    temp1 = b.pox;
+    strcpy(o, hash(temp1));
+    fprintf(castola, "%s\n", o);
+    temp1 = b.poy;
+    strcpy(o, hash(temp1));
+    fprintf(castola, "%s\n", o);
+    ////////////////////////////////////names
+    fprintf(castola, "%s\n", a.name);
+    fprintf(castola, "%s\n", b.name);
+    fclose(castola);
+}
+
 int main()
 {
     must_init(al_init(), "allegro");
@@ -105,7 +161,6 @@ int main()
     ALLEGRO_BITMAP *btf = al_load_bitmap("battle.jpg");
     ALLEGRO_BITMAP *one = al_load_bitmap("1.png");
     ALLEGRO_BITMAP *two = al_load_bitmap("2.png");
-    ALLEGRO_BITMAP *letter = al_load_bitmap("letter.png");
     ALLEGRO_BITMAP *battlefi = al_load_bitmap("battle.jpg");
     ALLEGRO_BITMAP *mainbo = al_load_bitmap("mainbo.jpg");
 
@@ -120,7 +175,6 @@ int main()
     must_init(ws, "WarScence");
     must_init(btf, "Battlefield");
     must_init(battlefi, "final");
-    must_init(letter, "letter");
 
     struct hero hitler;
     hitler.damage = 7;
@@ -365,8 +419,8 @@ NAMI:
 
     start = clock();
     end = clock();
-    while (end - start < 320000)
-    { //Last Check Menu
+    while (end - start < 320000) //320000
+    {                           //Last Check Menu
 
         al_draw_bitmap(ws, 0, -20, 0);
         al_draw_text(font2, al_map_rgb(14, 13, 105), 220 + 1, 40, 0, "Player1:");
@@ -558,17 +612,7 @@ NAMI:
                 {
 
                     int vallahala = 1;
-                    int x[3][3];
-                    x[0][0] = 107; //red
-                    x[0][1] = 5;
-                    x[0][2] = 5;
-                    //yellow 198, 231, 7
-                    x[1][0] = 198;
-                    x[1][1] = 231;
-                    x[1][2] = 7;
-                    x[2][0] = 198;
-                    x[2][1] = 231;
-                    x[2][2] = 7;
+
                     while (!al_key_down(&ks, ALLEGRO_KEY_SPACE))
                     {
 
@@ -576,9 +620,9 @@ NAMI:
                         int j = 231;
                         int k = 7;
                         int ho1, ho2, step;
-                        step = 110;
-                        ho1 = 250; ////x
-                        ho2 = 200; ///y
+                        step = 120;
+                        ho1 = 280; ////x
+                        ho2 = 75;  ///y
                         int m, n, o;
                         m = 107;
                         n = 5;
@@ -595,17 +639,25 @@ NAMI:
                                     vallahala += 1;
                                 else if (vallahala == 2)
                                     vallahala += 1;
-                                else
+                                else if (vallahala == 3)
+                                    vallahala += 1;
+                                else if (vallahala == 4)
+                                    vallahala += 1;
+                                else if (vallahala == 5)
                                     vallahala = 1;
                             }
                             else if (event.keyboard.keycode == ALLEGRO_KEY_UP)
                             {
                                 if (vallahala == 1)
-                                    vallahala = 3;
+                                    vallahala = 5;
                                 else if (vallahala == 2)
                                     vallahala = 1;
-                                else
+                                else if (vallahala == 3)
                                     vallahala = 2;
+                                else if (vallahala == 4)
+                                    vallahala = 3;
+                                else if (vallahala == 5)
+                                    vallahala = 4;
                             }
                             break;
                         case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -617,62 +669,125 @@ NAMI:
                         al_clear_to_color(al_map_rgb(3, 1, 22));
                         if (vallahala == 1)
                         {
-                            x[1][0] = i;
-                            x[0][0] = m;
-                            x[1][1] = j;
-                            x[0][1] = n;
-                            x[1][2] = k;
-                            x[0][2] = o;
-                            x[2][0] = i;
-                            x[2][1] = j;
-                            x[2][2] = k;
-                            al_draw_text(font, al_map_rgb(x[0][0], x[0][1], x[0][2]), ho1, ho2, 0, "Resume");
-                            al_draw_text(font, al_map_rgb(x[1][0], x[1][1], x[1][2]), ho1, ho2 + step, 0, "Main Menu");
-                            al_draw_text(font, al_map_rgb(x[2][0], x[2][1], x[2][2]), ho1, ho2 + (2 * step), 0, "Quit");
+
+                            al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2, 0, "Resume");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Save Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Load Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Main Menu");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
                         }
-                        if (vallahala == 2)
+                        else if (vallahala == 2)
                         {
-                            x[1][0] = m;
-                            x[0][0] = i;
-                            x[1][1] = n;
-                            x[0][1] = j;
-                            x[1][2] = o;
-                            x[0][2] = k;
-                            x[2][0] = i;
-                            x[2][1] = j;
-                            x[2][2] = k;
-                            al_draw_text(font, al_map_rgb(x[0][0], x[0][1], x[0][2]), ho1, ho2, 0, "Resume");
-                            al_draw_text(font, al_map_rgb(x[1][0], x[1][1], x[1][2]), ho1, ho2 + step, 0, "Main Menu");
-                            al_draw_text(font, al_map_rgb(x[2][0], x[2][1], x[2][2]), ho1, ho2 + (2 * step), 0, "Quit");
+
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "Resume");
+                            al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + step, 0, "Save Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Load Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Main Menu");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
                         }
-                        if (vallahala == 3)
+                        else if (vallahala == 3)
                         {
-                            x[1][0] = i;
-                            x[0][0] = i;
-                            x[1][1] = j;
-                            x[0][1] = j;
-                            x[1][2] = k;
-                            x[0][2] = k;
-                            x[2][0] = m;
-                            x[2][1] = n;
-                            x[2][2] = o;
-                            al_draw_text(font, al_map_rgb(x[0][0], x[0][1], x[0][2]), ho1, ho2, 0, "Resume");
-                            al_draw_text(font, al_map_rgb(x[1][0], x[1][1], x[1][2]), ho1, ho2 + step, 0, "Main Menu");
-                            al_draw_text(font, al_map_rgb(x[2][0], x[2][1], x[2][2]), ho1, ho2 + (2 * step), 0, "Quit");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "Resume");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Save Game");
+                            al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (2 * step), 0, "Load Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Main Menu");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
+                        }
+                        else if (vallahala == 4)
+                        {
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "Resume");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Save Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Load Game");
+                            al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (3 * step), 0, "Main Menu");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
+                        }
+                        else if (vallahala == 5)
+                        {
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "Resume");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Save Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Load Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Main Menu");
+                            al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (4 * step), 0, "Quit");
                         }
                         al_flip_display();
                     } //while
 
                     if (vallahala == 1)
                     {
-                        key[ALLEGRO_KEY_ESCAPE]=0;
+                        key[ALLEGRO_KEY_ESCAPE] = 0;
+                    }
+                    else if (vallahala == 2)
+                    {
+                        saveprotocol(player1, player2, dmap);
+                    }
+                    else if (vallahala == 3)
+                    {
+                        if (1 == 1)
+                        {
+                            FILE *kurwa;
+                            int t1 = 0, t2, t3;
+                            char w[50], t21;
+                            kurwa = fopen("save.txt", "rt");
+                            for (int i = 0; i < 6; i++)
+                            {
+                                for (int j = 0; j < 6; j++)
+                                {
+                                    fscanf(kurwa, "%s", w);
+                                    t1 = dhash(w);
+                                    dmap[i][j] = t1;
+                                }
+                            }
+
+                            //////playerone
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player1.damage = t1;
+                            //printf("lllllllllllllll");
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player1.honnor = t1;
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player1.house_health = t1;
+                            ////////////////////////////////////////////////////////////////////////
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player1.pox = t1;
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player1.poy = t1;
+                            //********************************************
+                            /////////player two
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player2.damage = t1;
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player2.honnor = t1;
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player2.house_health = t1;
+                            //*****************************************
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player2.pox = t1;
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player2.poy = t1;
+                            //*************************************************
+                            fscanf(kurwa, "%s", w);
+                            strcpy(player1.name, w);
+                            fscanf(kurwa, "%s", w);
+                            strcpy(player2.name, w);
+                            fclose(kurwa);
+                        }
                     }
 
-                    else if (vallahala == 2)
+                    else if (vallahala == 4)
                     {
                         goto MAIN;
                     }
-                    else if (vallahala == 3)
+                    else if (vallahala == 5)
 
                     {
                         fti = -1;
@@ -854,17 +969,7 @@ NAMI:
                 {
 
                     int vallahala = 1;
-                    int x[3][3];
-                    x[0][0] = 107; //red
-                    x[0][1] = 5;
-                    x[0][2] = 5;
-                    //yellow 198, 231, 7
-                    x[1][0] = 198;
-                    x[1][1] = 231;
-                    x[1][2] = 7;
-                    x[2][0] = 198;
-                    x[2][1] = 231;
-                    x[2][2] = 7;
+
                     while (!al_key_down(&ks, ALLEGRO_KEY_SPACE))
                     {
 
@@ -872,9 +977,9 @@ NAMI:
                         int j = 231;
                         int k = 7;
                         int ho1, ho2, step;
-                        step = 110;
-                        ho1 = 250; ////x
-                        ho2 = 200; ///y
+                        step = 120;
+                        ho1 = 280; ////x
+                        ho2 = 75;  ///y
                         int m, n, o;
                         m = 107;
                         n = 5;
@@ -891,17 +996,25 @@ NAMI:
                                     vallahala += 1;
                                 else if (vallahala == 2)
                                     vallahala += 1;
-                                else
+                                else if (vallahala == 3)
+                                    vallahala += 1;
+                                else if (vallahala == 4)
+                                    vallahala += 1;
+                                else if (vallahala == 5)
                                     vallahala = 1;
                             }
                             else if (event.keyboard.keycode == ALLEGRO_KEY_UP)
                             {
                                 if (vallahala == 1)
-                                    vallahala = 3;
+                                    vallahala = 5;
                                 else if (vallahala == 2)
                                     vallahala = 1;
-                                else
+                                else if (vallahala == 3)
                                     vallahala = 2;
+                                else if (vallahala == 4)
+                                    vallahala = 3;
+                                else if (vallahala == 5)
+                                    vallahala = 4;
                             }
                             break;
                         case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -913,62 +1026,125 @@ NAMI:
                         al_clear_to_color(al_map_rgb(3, 1, 22));
                         if (vallahala == 1)
                         {
-                            x[1][0] = i;
-                            x[0][0] = m;
-                            x[1][1] = j;
-                            x[0][1] = n;
-                            x[1][2] = k;
-                            x[0][2] = o;
-                            x[2][0] = i;
-                            x[2][1] = j;
-                            x[2][2] = k;
-                            al_draw_text(font, al_map_rgb(x[0][0], x[0][1], x[0][2]), ho1, ho2, 0, "Resume");
-                            al_draw_text(font, al_map_rgb(x[1][0], x[1][1], x[1][2]), ho1, ho2 + step, 0, "Main Menu");
-                            al_draw_text(font, al_map_rgb(x[2][0], x[2][1], x[2][2]), ho1, ho2 + (2 * step), 0, "Quit");
+
+                            al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2, 0, "Resume");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Save Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Load Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Main Menu");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
                         }
-                        if (vallahala == 2)
+                        else if (vallahala == 2)
                         {
-                            x[1][0] = m;
-                            x[0][0] = i;
-                            x[1][1] = n;
-                            x[0][1] = j;
-                            x[1][2] = o;
-                            x[0][2] = k;
-                            x[2][0] = i;
-                            x[2][1] = j;
-                            x[2][2] = k;
-                            al_draw_text(font, al_map_rgb(x[0][0], x[0][1], x[0][2]), ho1, ho2, 0, "Resume");
-                            al_draw_text(font, al_map_rgb(x[1][0], x[1][1], x[1][2]), ho1, ho2 + step, 0, "Main Menu");
-                            al_draw_text(font, al_map_rgb(x[2][0], x[2][1], x[2][2]), ho1, ho2 + (2 * step), 0, "Quit");
+
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "Resume");
+                            al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + step, 0, "Save Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Load Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Main Menu");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
                         }
-                        if (vallahala == 3)
+                        else if (vallahala == 3)
                         {
-                            x[1][0] = i;
-                            x[0][0] = i;
-                            x[1][1] = j;
-                            x[0][1] = j;
-                            x[1][2] = k;
-                            x[0][2] = k;
-                            x[2][0] = m;
-                            x[2][1] = n;
-                            x[2][2] = o;
-                            al_draw_text(font, al_map_rgb(x[0][0], x[0][1], x[0][2]), ho1, ho2, 0, "Resume");
-                            al_draw_text(font, al_map_rgb(x[1][0], x[1][1], x[1][2]), ho1, ho2 + step, 0, "Main Menu");
-                            al_draw_text(font, al_map_rgb(x[2][0], x[2][1], x[2][2]), ho1, ho2 + (2 * step), 0, "Quit");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "Resume");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Save Game");
+                            al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (2 * step), 0, "Load Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Main Menu");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
+                        }
+                        else if (vallahala == 4)
+                        {
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "Resume");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Save Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Load Game");
+                            al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (3 * step), 0, "Main Menu");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
+                        }
+                        else if (vallahala == 5)
+                        {
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "Resume");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Save Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Load Game");
+                            al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Main Menu");
+                            al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (4 * step), 0, "Quit");
                         }
                         al_flip_display();
                     } //while
 
                     if (vallahala == 1)
                     {
-                        key[ALLEGRO_KEY_ESCAPE]=0;
+                        key[ALLEGRO_KEY_ESCAPE] = 0;
+                    }
+                    else if (vallahala == 2)
+                    {
+                        saveprotocol(player1, player2, dmap);
+                    }
+                    else if (vallahala == 3)
+                    {
+                        if (1 == 1)
+                        {
+                            FILE *kurwa;
+                            int t1 = 0, t2, t3;
+                            char w[50], t21;
+                            kurwa = fopen("save.txt", "rt");
+                            for (int i = 0; i < 6; i++)
+                            {
+                                for (int j = 0; j < 6; j++)
+                                {
+                                    fscanf(kurwa, "%s", w);
+                                    t1 = dhash(w);
+                                    dmap[i][j] = t1;
+                                }
+                            }
+
+                            //////playerone
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player1.damage = t1;
+                            //printf("lllllllllllllll");
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player1.honnor = t1;
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player1.house_health = t1;
+                            ////////////////////////////////////////////////////////////////////////
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player1.pox = t1;
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player1.poy = t1;
+                            //********************************************
+                            /////////player two
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player2.damage = t1;
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player2.honnor = t1;
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player2.house_health = t1;
+                            //*****************************************
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player2.pox = t1;
+                            fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            player2.poy = t1;
+                            //*************************************************
+                            fscanf(kurwa, "%s", w);
+                            strcpy(player1.name, w);
+                            fscanf(kurwa, "%s", w);
+                            strcpy(player2.name, w);
+                            fclose(kurwa);
+                        }
                     }
 
-                    else if (vallahala == 2)
+                    else if (vallahala == 4)
                     {
                         goto MAIN;
                     }
-                    else if (vallahala == 3)
+                    else if (vallahala == 5)
 
                     {
                         fti = -1;
@@ -1068,7 +1244,7 @@ NAMI:
         }
         start = clock();
         al_get_keyboard_state(&ks);
-        if (player2.house_health <= 0)
+        if (player2.house_health <= -150) ///////////////////////////////////////////////*****
         {
             while (1)
             {
@@ -1091,7 +1267,7 @@ NAMI:
                 }
             }
         }
-        else if (player1.house_health <= 0)
+        else if (player1.house_health <= -150)
         {
             while (1)
             {
@@ -1125,7 +1301,6 @@ NAMI:
     al_destroy_bitmap(assa);
     al_destroy_bitmap(hear);
     al_destroy_bitmap(ws);
-    al_destroy_bitmap(letter);
     al_destroy_bitmap(p2);
     al_destroy_bitmap(menu);
     al_destroy_bitmap(hitle);

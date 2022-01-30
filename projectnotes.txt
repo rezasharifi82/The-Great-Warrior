@@ -5,12 +5,23 @@ gcc hello.c -o hello $(pkg-config allegro-5 allegro_font-5 allegro_image-5 --lib
 gcc hello.c -o hello $(pkg-config allegro-5 allegro_font-5 allegro_image-5 allegro_primitives-5 --libs --cflags)
 ./hello
 gcc hello.c -o hello $(pkg-config allegro-5 allegro_font-5 allegro_image-5 allegro_ttf-5  allegro_primitives-5 --libs --cflags)
+change the saves
+
 characters:
 1.lionheart richard
 2.hitleer
 4.ezio auditore
 5.the great cyrus
 ba clid haye jahati gharar shod
+
+
+fix the damn  overlap problem
+cp ~/Desktop/Sources/Petafa/hello.c ~/Desktop/Sources/gits/The-Great-Warrior/Dcode.c
+https://github.com/rezasharifi82/The-Great-Warrior.git
+github token:
+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
+
+
 
 cells{
     honor   attacking boost
