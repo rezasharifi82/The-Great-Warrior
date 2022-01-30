@@ -1517,6 +1517,7 @@ OONJA:
     al_destroy_bitmap(assa);
     al_destroy_bitmap(hear);
     al_destroy_bitmap(ws);
+    al_destroy_bitmap(mana);
     al_destroy_bitmap(p2);
     al_destroy_bitmap(menu);
     al_destroy_bitmap(hitle);
