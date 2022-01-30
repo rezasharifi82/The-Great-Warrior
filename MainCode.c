@@ -157,6 +157,7 @@ int main()
     ALLEGRO_BITMAP *assa = al_load_bitmap("Assa.png");
     ALLEGRO_BITMAP *hear = al_load_bitmap("lion.png");
     ALLEGRO_BITMAP *p2 = al_load_bitmap("p2.jpg");
+    ALLEGRO_BITMAP *mana = al_load_bitmap("mana.jpg");
     ALLEGRO_BITMAP *ws = al_load_bitmap("war.jpg");
     ALLEGRO_BITMAP *btf = al_load_bitmap("battle.jpg");
     ALLEGRO_BITMAP *one = al_load_bitmap("1.png");
@@ -169,6 +170,7 @@ int main()
     must_init(p2, "p2menu");
     must_init(cyru, "cyrus");
     must_init(apple, "apple");
+    must_init(mana, "mana");
     must_init(hitle, "hitler");
     must_init(assa, "assassins creed");
     must_init(hear, "lion heart richard");
@@ -283,6 +285,221 @@ int main()
         if (al_key_down(&ks, ALLEGRO_KEY_ESCAPE))
             fti = -1;
     }
+
+    int elatsa = 1;
+    while (1)
+    {
+
+        al_draw_bitmap(mana, -200, -100, 0);
+        int elatsa = 1;
+
+        while (!al_key_down(&ks, ALLEGRO_KEY_SPACE))
+        {
+
+            int i = 198;
+            int j = 231;
+            int k = 7;
+            int ho1, ho2, step;
+            step = 120;
+            ho1 = 280; ////x
+            ho2 = 75;  ///y
+            int m, n, o;
+            m = 107;
+            n = 5;
+            o = 5;
+            al_wait_for_event(queue, &event);
+            al_get_keyboard_state(&ks);
+            switch (event.type)
+            {
+            case ALLEGRO_EVENT_KEY_DOWN:
+                if (event.keyboard.keycode == ALLEGRO_KEY_DOWN)
+                {
+
+                    if (elatsa == 1)
+                        elatsa += 1;
+                    else if (elatsa == 2)
+                        elatsa += 1;
+                    else if (elatsa == 3)
+                        elatsa += 1;
+                    else if (elatsa == 4)
+                        elatsa += 1;
+                    else if (elatsa == 5)
+                        elatsa = 1;
+                }
+                else if (event.keyboard.keycode == ALLEGRO_KEY_UP)
+                {
+                    if (elatsa == 1)
+                        elatsa = 5;
+                    else if (elatsa == 2)
+                        elatsa = 1;
+                    else if (elatsa == 3)
+                        elatsa = 2;
+                    else if (elatsa == 4)
+                        elatsa = 3;
+                    else if (elatsa == 5)
+                        elatsa = 4;
+                }
+                break;
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                fti = -1;
+                goto QUIT;
+
+                break;
+            } //switch
+            al_draw_bitmap(mana, -200, -100, 0);
+            if (elatsa == 1)
+            {
+
+                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2, 0, "New Game");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Load Game");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Back to First");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Developer Info");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
+            }
+            else if (elatsa == 2)
+            {
+
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "New Game");
+                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + step, 0, "Load Game");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Back to First");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Developer Info");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
+            }
+            else if (elatsa == 3)
+            {
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "New Game");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Load Game");
+                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (2 * step), 0, "Back to First");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Developer Info");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
+            }
+            else if (elatsa == 4)
+            {
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "New Game");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Load Game");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Back to First");
+                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (3 * step), 0, "Developer Info");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
+            }
+            else if (elatsa == 5)
+            {
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "New Game");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Load Game");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Back to First");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Developer Info");
+                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (4 * step), 0, "Quit");
+            }
+            al_flip_display();
+        } //while
+
+        if (elatsa == 1)
+        {
+            int dmap[6][6] = {{0, 6, 0, 1, 8, 0},
+                              {0, 7, 0, 0, 3, 0},
+                              {9, 0, 2, 7, 0, 4},
+                              {2, 0, 5, 6, 1, 0},
+                              {3, 4, 0, 1, 0, 7},
+                              {2, 8, 1, 0, 5, 0}};
+            break;
+        }
+        else if (elatsa == 4)
+        {
+            start = clock();
+            while (end - start < 620000)
+            {
+                int kola,stora;
+                kola=20;
+                stora=80;
+                al_clear_to_color(al_map_rgb(31, 199, 87));
+                al_draw_text(font1, al_map_rgb(7, 3, 61), 100, kola, 0, "This Project has made by:");
+                al_draw_text(font, al_map_rgb(7, 3, 61), 80, kola+(1*stora), 0, "Mohammadreza Sharifi");
+                al_draw_text(font1, al_map_rgb(7, 3, 61), 240, kola+(2*stora)+50, 0, "@FUM Jan 2022");
+                al_draw_text(font4, al_map_rgb(7, 3, 61), 60, kola+(3*stora)+90, 0, "Contact info:");
+                al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola+(4*stora)+90, 0, "sharifi.mohammadreza2002@gmail.com");
+                al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola+(5*stora)+90, 0, "sharifi.mohammadreza@mail.um.ac.ir");
+                al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola+(6*stora)+90, 0, "https://t.me/Maresha82");
+
+                al_flip_display();
+                end = clock();
+            }
+            goto MAIN;
+        }
+        else if (elatsa == 2)
+        {
+            if (1 == 1)
+            {
+                FILE *kurwa;
+                int t1 = 0, t2, t3;
+                char w[50], t21;
+                kurwa = fopen("save.txt", "rt");
+                for (int i = 0; i < 6; i++)
+                {
+                    for (int j = 0; j < 6; j++)
+                    {
+                        fscanf(kurwa, "%s", w);
+                        t1 = dhash(w);
+                        dmap[i][j] = t1;
+                    }
+                }
+
+                //////playerone
+                fscanf(kurwa, "%s", w);
+                t1 = dhash(w);
+                player1.damage = t1;
+                fscanf(kurwa, "%s", w);
+                t1 = dhash(w);
+                player1.honnor = t1;
+                fscanf(kurwa, "%s", w);
+                t1 = dhash(w);
+                player1.house_health = t1;
+                ////////////////////////////////////////////////////////////////////////
+                fscanf(kurwa, "%s", w);
+                t1 = dhash(w);
+                player1.pox = t1;
+                fscanf(kurwa, "%s", w);
+                t1 = dhash(w);
+                player1.poy = t1;
+                //********************************************
+                /////////player two
+                fscanf(kurwa, "%s", w);
+                t1 = dhash(w);
+                player2.damage = t1;
+                fscanf(kurwa, "%s", w);
+                t1 = dhash(w);
+                player2.honnor = t1;
+                fscanf(kurwa, "%s", w);
+                t1 = dhash(w);
+                player2.house_health = t1;
+                //*****************************************
+                fscanf(kurwa, "%s", w);
+                t1 = dhash(w);
+                player2.pox = t1;
+                fscanf(kurwa, "%s", w);
+                t1 = dhash(w);
+                player2.poy = t1;
+                //*************************************************
+                fscanf(kurwa, "%s", w);
+                strcpy(player1.name, w);
+                fscanf(kurwa, "%s", w);
+                strcpy(player2.name, w);
+                fclose(kurwa);
+                goto OONJA;
+            }
+            break;
+        }
+
+        else if (elatsa == 3)
+        {
+            goto MAIN;
+        }
+        else if (elatsa == 5)
+
+        {
+            fti = -1;
+            goto QUIT;
+        }
+    }
+
 NAMI:
     wpi = 1;
     al_get_keyboard_state(&ks);
@@ -420,7 +637,7 @@ NAMI:
     start = clock();
     end = clock();
     while (end - start < 320000) //320000
-    {                           //Last Check Menu
+    {                            //Last Check Menu
 
         al_draw_bitmap(ws, 0, -20, 0);
         al_draw_text(font2, al_map_rgb(14, 13, 105), 220 + 1, 40, 0, "Player1:");
@@ -457,7 +674,7 @@ NAMI:
         }
         end = clock();
     }
-
+OONJA:
     nobat = 1;
     int q = 0;
 #define KEY_SEEN 1
@@ -742,7 +959,6 @@ NAMI:
                             fscanf(kurwa, "%s", w);
                             t1 = dhash(w);
                             player1.damage = t1;
-                            //printf("lllllllllllllll");
                             fscanf(kurwa, "%s", w);
                             t1 = dhash(w);
                             player1.honnor = t1;
@@ -1244,7 +1460,7 @@ NAMI:
         }
         start = clock();
         al_get_keyboard_state(&ks);
-        if (player2.house_health <= -150) ///////////////////////////////////////////////*****
+        if (player2.house_health <= 0) ///////////////////////////////////////////////*****
         {
             while (1)
             {
@@ -1267,7 +1483,7 @@ NAMI:
                 }
             }
         }
-        else if (player1.house_health <= -150)
+        else if (player1.house_health <= 0)
         {
             while (1)
             {
