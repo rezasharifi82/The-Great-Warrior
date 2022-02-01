@@ -17,6 +17,8 @@ void must_init(bool test, const char *description)
     printf("couldn't initialize %s\n", description);
     exit(1);
 }
+int max(int a, int b);
+int minimax(int x, int y, int map[6][6]);
 struct hero
 {
     int honnor;
@@ -33,40 +35,24 @@ struct player
     int pox; // to define the position of the players
     int poy;
 };
-int sugge(struct player c1, struct player c2, int nobat)
+int sugge(struct player c1)
 {
     int x, y;
     x = c1.pox;
     y = c1.poy;
 
-    if (nobat == 1)
-    {
-        if (x < 5)
-            al_draw_filled_rectangle((90 * y) + 155, (90 * (x + 1)) + 65.5, (90 * y) + 234, (90 * (x + 1)) + 145.4, al_map_rgb(102, 7, 52));
-        if (x > 0)
-            al_draw_filled_rectangle((90 * y) + 155, (90 * (x - 1)) + 65.5, (90 * y) + 234, (90 * (x - 1)) + 145.4, al_map_rgb(102, 7, 52));
-        if (y > 0)
-            al_draw_filled_rectangle((90 * (y - 1)) + 155, (90 * x) + 65.5, (90 * (y - 1)) + 234, (90 * x) + 145.4, al_map_rgb(102, 7, 52));
-        if (y < 5)
-            al_draw_filled_rectangle((90 * (y + 1)) + 155, (90 * x) + 65.5, (90 * (y + 1)) + 234, (90 * x) + 145.4, al_map_rgb(102, 7, 52));
-    }
-    int x2 = c2.pox;
-    int y2 = c2.poy;
-    if (nobat == 2)
-    {
-        if (x2 < 5 && x2 + 1 != x)
-            al_draw_filled_rectangle((90 * y2) + 155, (90 * (x2 + 1)) + 65.5, (90 * y2) + 234, (90 * (x2 + 1)) + 145.4, al_map_rgb(102, 7, 52));
-        if (x2 > 0 && x2 - 1 != x)
-            al_draw_filled_rectangle((90 * y2) + 155, (90 * (x2 - 1)) + 65.5, (90 * y2) + 234, (90 * (x2 - 1)) + 145.4, al_map_rgb(102, 7, 52));
-        if (y2 > 0 && y2 - 1 != y)
-            al_draw_filled_rectangle((90 * (y2 - 1)) + 155, (90 * x2) + 65.5, (90 * (y2 - 1)) + 234, (90 * x2) + 145.4, al_map_rgb(102, 7, 52));
-        if (y2 < 5 && y2 + 1 != y)
-            al_draw_filled_rectangle((90 * (y2 + 1)) + 155, (90 * x2) + 65.5, (90 * (y2 + 1)) + 234, (90 * x2) + 145.4, al_map_rgb(102, 7, 52));
-    }
+    if (x < 5)
+        al_draw_filled_rectangle((90 * y) + 155, (90 * (x + 1)) + 65.5, (90 * y) + 234, (90 * (x + 1)) + 145.4, al_map_rgb(102, 7, 52));
+    if (x > 0)
+        al_draw_filled_rectangle((90 * y) + 155, (90 * (x - 1)) + 65.5, (90 * y) + 234, (90 * (x - 1)) + 145.4, al_map_rgb(102, 7, 52));
+    if (y > 0)
+        al_draw_filled_rectangle((90 * (y - 1)) + 155, (90 * x) + 65.5, (90 * (y - 1)) + 234, (90 * x) + 145.4, al_map_rgb(102, 7, 52));
+    if (y < 5)
+        al_draw_filled_rectangle((90 * (y + 1)) + 155, (90 * x) + 65.5, (90 * (y + 1)) + 234, (90 * x) + 145.4, al_map_rgb(102, 7, 52));
     return 0;
 }
 
-void saveprotocol(struct player a, struct player b, int map[6][6])
+void saveprotocol(struct player a, struct player b, int map[6][6], int single)
 {
     FILE *castola;
     castola = fopen("save.txt", "wt");
@@ -115,9 +101,13 @@ void saveprotocol(struct player a, struct player b, int map[6][6])
     temp1 = b.poy;
     strcpy(o, hash(temp1));
     fprintf(castola, "%s\n", o);
+    temp1 = single;
+    strcpy(o, hash(temp1));
+    fprintf(castola, "%s\n", o);
     ////////////////////////////////////names
     fprintf(castola, "%s\n", a.name);
     fprintf(castola, "%s\n", b.name);
+
     fclose(castola);
 }
 
@@ -142,7 +132,6 @@ int main()
     ALLEGRO_FONT *font3 = al_load_font("f2.ttf", 90, 0);
     ALLEGRO_FONT *font4 = al_load_font("f3.ttf", 50, 0);
     ALLEGRO_FONT *font5 = al_load_font("f2.ttf", 120, 0);
-    //    ALLEGRO_FONT* font1 = al_load_font("rez.ttf",30,0);
     must_init(font, "font");
     must_init(font1, "font1");
     must_init(font2, "font2");
@@ -206,11 +195,11 @@ int main()
     player2.poy = 5;
 
     int dmap[6][6] = {{0, 6, 0, 1, 8, 0},
-                      {0, 7, 0, 0, 3, 0},
-                      {9, 0, 2, 7, 0, 4},
-                      {2, 0, 5, 6, 1, 0},
-                      {3, 4, 0, 1, 0, 7},
-                      {2, 8, 1, 0, 5, 0}};
+                      {0, 7, 0, 2, 3, 0},
+                      {9, 9, 2, 7, 0, 4},
+                      {2, 0, 5, 6, 8, 3},
+                      {3, 4, 0, 1, 2, 7},
+                      {2, 8, 5, 0, 5, 0}};
 
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
@@ -219,6 +208,7 @@ int main()
     int vaziat = 0;
     bool done = false;
     bool redraw = true;
+    int single = 1;
     ALLEGRO_EVENT event;
     int fti = 0;
     ALLEGRO_KEYBOARD_STATE ks;
@@ -229,11 +219,11 @@ int main()
     while (1)
     { //Main Menu
         int dmap[6][6] = {{0, 6, 0, 1, 8, 0},
-                          {0, 7, 0, 0, 3, 0},
-                          {9, 0, 2, 7, 0, 4},
-                          {2, 0, 5, 6, 1, 0},
-                          {3, 4, 0, 1, 0, 7},
-                          {2, 8, 1, 0, 5, 0}};
+                          {0, 7, 0, 2, 3, 0},
+                          {9, 9, 2, 7, 0, 4},
+                          {2, 0, 5, 6, 8, 3},
+                          {3, 4, 0, 1, 2, 7},
+                          {2, 8, 5, 0, 5, 0}};
         if (fti == 0)
         {
         MAIN:
@@ -301,7 +291,7 @@ int main()
             int k = 7;
             int ho1, ho2, step;
             step = 120;
-            ho1 = 280; ////x
+            ho1 = 240; ////x
             ho2 = 75;  ///y
             int m, n, o;
             m = 107;
@@ -350,44 +340,58 @@ int main()
             if (elatsa == 1)
             {
 
-                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2, 0, "New Game");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Load Game");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Back to First");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Developer Info");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
+                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2, 0, "Single Player");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Multi Player");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Load Game");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Back to First");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Developer Info");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (5 * step), 0, "Quit");
             }
             else if (elatsa == 2)
             {
 
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "New Game");
-                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + step, 0, "Load Game");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Back to First");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Developer Info");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "Single Player");
+                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + step, 0, "Multi Player");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Load Game");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Back to First");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Developer Info");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (5 * step), 0, "Quit");
             }
             else if (elatsa == 3)
             {
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "New Game");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Load Game");
-                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (2 * step), 0, "Back to First");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Developer Info");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "Single Player");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Multi Player");
+                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (2 * step), 0, "Load Game");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Back to First");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Developer Info");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (5 * step), 0, "Quit");
             }
             else if (elatsa == 4)
             {
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "New Game");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Load Game");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Back to First");
-                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (3 * step), 0, "Developer Info");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Quit");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "Single Player");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Multi Player");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Load Game");
+                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (3 * step), 0, "Back to First");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Developer Info");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (5 * step), 0, "Quit");
             }
             else if (elatsa == 5)
             {
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "New Game");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Load Game");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Back to First");
-                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Developer Info");
-                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (4 * step), 0, "Quit");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "Single Player");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Multi Player");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Load Game");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Back to First");
+                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (4 * step), 0, "Developer Info");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (5 * step), 0, "Quit");
+            }
+            else if (elatsa == 6)
+            {
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2, 0, "Single Player");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Multi Player");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (2 * step), 0, "Load Game");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (3 * step), 0, "Back to First");
+                al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + (4 * step), 0, "Developer Info");
+                al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2 + (5 * step), 0, "Quit");
             }
             al_flip_display();
         } //while
@@ -395,36 +399,37 @@ int main()
         if (elatsa == 1)
         {
             int dmap[6][6] = {{0, 6, 0, 1, 8, 0},
-                              {0, 7, 0, 0, 3, 0},
-                              {9, 0, 2, 7, 0, 4},
-                              {2, 0, 5, 6, 1, 0},
-                              {3, 4, 0, 1, 0, 7},
-                              {2, 8, 1, 0, 5, 0}};
+                              {0, 7, 0, 2, 3, 0},
+                              {9, 9, 2, 7, 0, 4},
+                              {2, 0, 5, 6, 8, 3},
+                              {3, 4, 0, 1, 2, 7},
+                              {2, 8, 5, 0, 5, 0}};
+            single = 1;
             break;
         }
-        else if (elatsa == 4)
+        else if (elatsa == 5)
         {
             start = clock();
             while (end - start < 620000)
             {
-                int kola,stora;
-                kola=20;
-                stora=80;
+                int kola, stora;
+                kola = 20;
+                stora = 80;
                 al_clear_to_color(al_map_rgb(31, 199, 87));
                 al_draw_text(font1, al_map_rgb(7, 3, 61), 100, kola, 0, "This Project has made by:");
-                al_draw_text(font, al_map_rgb(7, 3, 61), 80, kola+(1*stora), 0, "Mohammadreza Sharifi");
-                al_draw_text(font1, al_map_rgb(7, 3, 61), 240, kola+(2*stora)+50, 0, "@FUM Jan 2022");
-                al_draw_text(font4, al_map_rgb(7, 3, 61), 60, kola+(3*stora)+90, 0, "Contact info:");
-                al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola+(4*stora)+90, 0, "sharifi.mohammadreza2002@gmail.com");
-                al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola+(5*stora)+90, 0, "sharifi.mohammadreza@mail.um.ac.ir");
-                al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola+(6*stora)+90, 0, "https://t.me/Maresha82");
+                al_draw_text(font, al_map_rgb(7, 3, 61), 80, kola + (1 * stora), 0, "Mohammadreza Sharifi");
+                al_draw_text(font1, al_map_rgb(7, 3, 61), 240, kola + (2 * stora) + 50, 0, "@FUM Jan 2022");
+                al_draw_text(font4, al_map_rgb(7, 3, 61), 60, kola + (3 * stora) + 90, 0, "Contact info:");
+                al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola + (4 * stora) + 90, 0, "sharifi.mohammadreza2002@gmail.com");
+                al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola + (5 * stora) + 90, 0, "sharifi.mohammadreza@mail.um.ac.ir");
+                al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola + (6 * stora) + 90, 0, "https://t.me/Maresha82");
 
                 al_flip_display();
                 end = clock();
             }
             goto MAIN;
         }
-        else if (elatsa == 2)
+        else if (elatsa == 3)
         {
             if (1 == 1)
             {
@@ -479,24 +484,42 @@ int main()
                 player2.poy = t1;
                 //*************************************************
                 fscanf(kurwa, "%s", w);
+                t1 = dhash(w);
+                printf("%d\n", t1);
+                single = t1;
+                printf("%d\n", single);
+                ///*****************************************
+                fscanf(kurwa, "%s", w);
                 strcpy(player1.name, w);
                 fscanf(kurwa, "%s", w);
                 strcpy(player2.name, w);
+
                 fclose(kurwa);
                 goto OONJA;
             }
             break;
         }
 
-        else if (elatsa == 3)
+        else if (elatsa == 4)
         {
             goto MAIN;
         }
-        else if (elatsa == 5)
+        else if (elatsa == 6)
 
         {
             fti = -1;
             goto QUIT;
+        }
+        else if (elatsa == 2)
+        {
+            int dmap[6][6] = {{0, 6, 0, 1, 8, 0},
+                              {0, 7, 0, 2, 3, 0},
+                              {9, 9, 2, 7, 0, 4},
+                              {2, 0, 5, 6, 8, 3},
+                              {3, 4, 0, 1, 2, 7},
+                              {2, 8, 5, 0, 5, 0}};
+            single = 0;
+            break;
         }
     }
 
@@ -574,7 +597,11 @@ NAMI:
         al_draw_bitmap(p2, -800, -50, 0);
         if (wpi == 1)
         {
-            al_draw_text(font1, al_map_rgb(250, 180, 165), 40, 30, 0, "Player2 Choose your character:");
+            if (single == 0)
+                al_draw_text(font1, al_map_rgb(250, 180, 165), 40, 30, 0, "Player2 Choose your character:");
+            if (single == 1)
+                al_draw_text(font1, al_map_rgb(250, 180, 165), 40, 30, 0, "Choose your Opponent :");
+
             al_draw_text(font4, al_map_rgb(250, 180, 165), 20, 620, 0, "Work With Chars");
             al_draw_bitmap(assa, 40, 100 - 20, 0);
             al_draw_text(font1, al_map_rgb(73, 3, 15), 38 + 5, 245 - 5, 0, "M.Ezio");
@@ -935,7 +962,7 @@ OONJA:
                     }
                     else if (vallahala == 2)
                     {
-                        saveprotocol(player1, player2, dmap);
+                        saveprotocol(player1, player2, dmap, single);
                     }
                     else if (vallahala == 3)
                     {
@@ -992,6 +1019,12 @@ OONJA:
                             player2.poy = t1;
                             //*************************************************
                             fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            printf("%d\n", t1);
+                            single = t1;
+                            printf("%d\n", single);
+                            ///*****************************************
+                            fscanf(kurwa, "%s", w);
                             strcpy(player1.name, w);
                             fscanf(kurwa, "%s", w);
                             strcpy(player2.name, w);
@@ -1013,9 +1046,10 @@ OONJA:
                 if (key[ALLEGRO_KEY_L]) //attack
                 {
                     player2.house_health -= ((player1.honnor) * player1.damage);
-                    player1.damage /= 3;
-                    player1.honnor /= 2;
+                    player1.damage /= 2;
+                    player1.honnor /= 3;
                     nobat = 2;
+                    key[ALLEGRO_KEY_L] = 0;
                 }
 
                 for (int i = 0; i < ALLEGRO_KEY_MAX; i++)
@@ -1038,7 +1072,7 @@ OONJA:
             } ////switch
 
         } ///nobat 1
-        else if (nobat == 2)
+        else if (nobat == 2 && single == 0)
         {
             switch (event.type)
             {
@@ -1051,17 +1085,17 @@ OONJA:
                         player2.pox -= 1;
                         int here = dmap[player2.pox][player2.poy];
                         if (here == 0)
-                            dmap[player2.pox][player2.poy] = (dmap[player2.pox][player2.poy] + 1) % 10;
+                            dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 1) % 9) + 1;
                         else if (here <= 3)
                         {
                             player2.honnor += here;
-                            dmap[player2.pox][player2.poy] = (dmap[player2.pox][player2.poy] + 2) % 10;
+                            dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 2) % 9) + 1;
                         }
                         else if (here <= 6)
                         {
 
                             player2.house_health += ((here - 3) * 100);
-                            dmap[player2.pox][player2.poy] = (dmap[player2.pox][player2.poy] + 3) % 10;
+                            dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 3) % 9) + 1;
                         }
                         else if (here <= 9)
                         {
@@ -1086,17 +1120,17 @@ OONJA:
                         player2.pox += 1;
                         int here = dmap[player2.pox][player2.poy];
                         if (here == 0)
-                            dmap[player2.pox][player2.poy] = (dmap[player2.pox][player2.poy] + 1) % 10;
+                            dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 1) % 9) + 1;
                         else if (here <= 3)
                         {
                             player2.honnor += here;
-                            dmap[player2.pox][player2.poy] = (dmap[player2.pox][player2.poy] + 2) % 10;
+                            dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 2) % 9) + 1;
                         }
                         else if (here <= 6)
                         {
 
                             player2.house_health += ((here - 3) * 100);
-                            dmap[player2.pox][player2.poy] = (dmap[player2.pox][player2.poy] + 3) % 10;
+                            dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 3) % 9) + 1;
                         }
                         else if (here <= 9)
                         {
@@ -1120,17 +1154,17 @@ OONJA:
                         player2.poy -= 1;
                         int here = dmap[player2.pox][player2.poy];
                         if (here == 0)
-                            dmap[player2.pox][player2.poy] = (dmap[player2.pox][player2.poy] + 1) % 10;
+                            dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 1) % 9) + 1;
                         else if (here <= 3)
                         {
                             player2.honnor += here;
-                            dmap[player2.pox][player2.poy] = (dmap[player2.pox][player2.poy] + 2) % 10;
+                            dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 2) % 9) + 1;
                         }
                         else if (here <= 6)
                         {
 
                             player2.house_health += ((here - 3) * 100);
-                            dmap[player2.pox][player2.poy] = (dmap[player2.pox][player2.poy] + 3) % 10;
+                            dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 3) % 9) + 1;
                         }
                         else if (here <= 9)
                         {
@@ -1154,17 +1188,17 @@ OONJA:
                         player2.poy += 1;
                         int here = dmap[player2.pox][player2.poy];
                         if (here == 0)
-                            dmap[player2.pox][player2.poy] = (dmap[player2.pox][player2.poy] + 1) % 10;
+                            dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 1) % 9) + 1;
                         else if (here <= 3)
                         {
                             player2.honnor += here;
-                            dmap[player2.pox][player2.poy] = (dmap[player2.pox][player2.poy] + 2) % 10;
+                            dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 2) % 9) + 1;
                         }
                         else if (here <= 6)
                         {
 
                             player2.house_health += ((here - 3) * 100);
-                            dmap[player2.pox][player2.poy] = (dmap[player2.pox][player2.poy] + 3) % 10;
+                            dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 3) % 9) + 1;
                         }
                         else if (here <= 9)
                         {
@@ -1291,7 +1325,7 @@ OONJA:
                     }
                     else if (vallahala == 2)
                     {
-                        saveprotocol(player1, player2, dmap);
+                        saveprotocol(player1, player2, dmap, single);
                     }
                     else if (vallahala == 3)
                     {
@@ -1349,6 +1383,12 @@ OONJA:
                             player2.poy = t1;
                             //*************************************************
                             fscanf(kurwa, "%s", w);
+                            t1 = dhash(w);
+                            printf("%d\n", t1);
+                            single = t1;
+                            printf("%d\n", single);
+                            ///*****************************************
+                            fscanf(kurwa, "%s", w);
                             strcpy(player1.name, w);
                             fscanf(kurwa, "%s", w);
                             strcpy(player2.name, w);
@@ -1371,8 +1411,8 @@ OONJA:
                 if (key[ALLEGRO_KEY_F]) //attack
                 {
                     player1.house_health -= (((player2.honnor) * player2.damage));
-                    player2.damage /= 3;
-                    player2.honnor /= 2;
+                    player2.damage /= 2;
+                    player2.honnor /= 3;
                     nobat = 1;
                 }
 
@@ -1396,6 +1436,67 @@ OONJA:
             } ////switch
 
         } ////nobat 2
+        else if (single == 1)
+        {
+            int cx = player2.pox;
+            int cy = player2.poy;
+            int temp;
+            int damage2 = player2.damage;
+            int honnor2 = player2.honnor;
+            temp = minimax(cx, cy, dmap);
+            if (honnor2 * damage2 >= 1382)
+            {
+                player1.house_health -= (honnor2 * damage2);
+                player2.damage /= 2;
+                player2.honnor /= 3;
+            }
+            else
+            {
+                if (temp == 1)
+                {
+                    player2.pox -= 1;
+                }
+                else if (temp == 2)
+                {
+                    player2.pox += 1;
+                }
+                else if (temp == 3)
+                {
+                    player2.poy -= 1;
+                }
+                else if (temp == 4)
+                {
+                    player2.poy += 1;
+                }
+
+                int here = dmap[player2.pox][player2.poy];
+                if (here == 0)
+                    dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 1) % 9) + 1;
+                else if (here <= 3)
+                {
+                    player2.honnor += here;
+                    dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 2) % 9) + 1;
+                }
+                else if (here <= 6)
+                {
+
+                    player2.house_health += ((here - 3) * 100);
+                    dmap[player2.pox][player2.poy] = ((dmap[player2.pox][player2.poy] + 3) % 9) + 1;
+                }
+                else if (here <= 9)
+                {
+
+                    player2.damage += (here - 6);
+                    dmap[player2.pox][player2.poy] = (dmap[player2.pox][player2.poy] + 4) % 10;
+                }
+            }
+            key[ALLEGRO_KEY_UP] = 0;
+            key[ALLEGRO_KEY_DOWN] = 0;
+            key[ALLEGRO_KEY_RIGHT] = 0;
+            key[ALLEGRO_KEY_LEFT] = 0;
+            nobat = 1;
+        }
+
         if (done)
             break;
 
@@ -1411,6 +1512,9 @@ OONJA:
                 for (int j = 0; j < 6; j++)
                 {
                     al_draw_rectangle(fx, fy, fx + lenght, fy + lenght, al_map_rgb(62, 78, 2), thickness);
+                    char alpha[10];
+                    sprintf(alpha, "%d", dmap[i][j]);
+                    al_draw_text(font, al_map_rgb(255, 255, 255), fx + (lenght) / 2, fy + (lenght) / 2, 0, alpha);
                     fx += lenght;
                 }
                 fx -= 6 * lenght;
@@ -1423,9 +1527,24 @@ OONJA:
             int tx = player2.pox;
             int ty = player2.poy;
             int zar = 90.5;
+            if (single == 0)
+            {
+                if (nobat == 1)
+                {
+                    sugge(player1);
+                }
+                else if (nobat == 2)
+                {
+                    sugge(player2);
+                }
+            }
+            if (single == 1)
+            {
+                sugge(player1);
+            }
             al_draw_filled_rectangle((zar * ty) + 155, (zar * tx) + 65.5, (zar * ty) + 234, (zar * tx) + 145.4, al_map_rgb(164, 164, 168));
             al_draw_filled_rectangle((zar * oy) + 155, (zar * ox) + 65.5, (zar * oy) + 234, (zar * ox) + 145.4, al_map_rgb(164, 164, 168));
-            sugge(player1, player2, nobat);
+
             al_draw_text(font3, al_map_rgb(87, 1, 1), (90 * oy) + 180, (90 * ox) + 55, 0, "1");
             al_draw_text(font3, al_map_rgb(6, 2, 65), (90 * ty) + 180, (90 * tx) + 55, 0, "2");
             al_draw_text(font1, al_map_rgb(206, 193, 7), 10, 5, 0, "Honor");
@@ -1533,4 +1652,78 @@ OONJA:
     al_destroy_event_queue(queue);
 
     return 0;
+}
+
+int minimax(int x, int y, int map[6][6]) //mini Ai
+{
+    int po[4] = {0, 0, 0, 0}; //bala payin chap rast
+    if (x - 1 > -1)
+    {
+        po[0] = 1;
+    }
+    if (x + 1 < 6)
+    {
+        po[1] = 1;
+    }
+    if (y - 1 > -1)
+    {
+        po[2] = 1;
+    }
+
+    if (y + 1 < 6)
+    {
+        po[3] = 1;
+    }
+
+    int wheret = 0, key = 0, s; //where to go
+    if (po[0] == 1)             //up
+    {
+        s = wheret;
+        wheret = max(wheret, map[x - 1][y]);
+        if (s < wheret)
+        {
+            key = 1;
+            s = wheret;
+        }
+    }
+    if (po[1] == 1) ///down
+    {
+        s = wheret;
+        wheret = max(wheret, map[x + 1][y]);
+        if (s < wheret)
+        {
+            key = 2;
+            s = wheret;
+        }
+    }
+    if (po[2] == 1) ///left
+    {
+        s = wheret;
+        wheret = max(wheret, map[x][y - 1]);
+        if (s < wheret)
+        {
+            key = 3;
+            s = wheret;
+        }
+    }
+    if (po[3] == 1) ///right
+    {
+        s = wheret;
+        wheret = max(wheret, map[x][y + 1]);
+        if (s < wheret)
+        {
+            key = 4;
+            s = wheret;
+        }
+    }
+
+    return key;
+}
+int max(int a, int b)
+{
+
+    if (a > b)
+        return a;
+    else
+        return b;
 }
