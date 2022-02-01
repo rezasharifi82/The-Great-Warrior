@@ -410,11 +410,17 @@ int main()
         else if (elatsa == 5)
         {
             start = clock();
-            while (end - start < 620000)
+            while (end - start < 400000)
             {
                 int kola, stora;
                 kola = 20;
                 stora = 80;
+                char temp [10];
+                int timee;
+                end = clock();
+                timee=10-((end-start)/40000);
+
+                sprintf(temp,"%d",timee);
                 al_clear_to_color(al_map_rgb(31, 199, 87));
                 al_draw_text(font1, al_map_rgb(7, 3, 61), 100, kola, 0, "This Project has made by:");
                 al_draw_text(font, al_map_rgb(7, 3, 61), 80, kola + (1 * stora), 0, "Mohammadreza Sharifi");
@@ -423,9 +429,9 @@ int main()
                 al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola + (4 * stora) + 90, 0, "sharifi.mohammadreza2002@gmail.com");
                 al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola + (5 * stora) + 90, 0, "sharifi.mohammadreza@mail.um.ac.ir");
                 al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola + (6 * stora) + 90, 0, "https://t.me/Maresha82");
-
+                al_draw_text(font,al_map_rgb(78, 5, 5),720,480,0,temp);
                 al_flip_display();
-                end = clock();
+                
             }
             goto MAIN;
         }
