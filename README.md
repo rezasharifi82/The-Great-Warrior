@@ -24,7 +24,7 @@ that Enough for now!
 
 i would be thankful if you develop the code or anything else.
 
-###ready for the battle ? 
-Let's Start
+**ready for the battle ?** 
+> Let's Start
 
-#Good luck Warrior :)
+***Good luck Warrior :)***
