@@ -415,12 +415,12 @@ int main()
                 int kola, stora;
                 kola = 20;
                 stora = 80;
-                char temp [10];
+                char temp[10];
                 int timee;
                 end = clock();
-                timee=10-((end-start)/40000);
+                timee = 10 - ((end - start) / 40000);
 
-                sprintf(temp,"%d",timee);
+                sprintf(temp, "%d", timee);
                 al_clear_to_color(al_map_rgb(31, 199, 87));
                 al_draw_text(font1, al_map_rgb(7, 3, 61), 100, kola, 0, "This Project has made by:");
                 al_draw_text(font, al_map_rgb(7, 3, 61), 80, kola + (1 * stora), 0, "Mohammadreza Sharifi");
@@ -429,9 +429,8 @@ int main()
                 al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola + (4 * stora) + 90, 0, "sharifi.mohammadreza2002@gmail.com");
                 al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola + (5 * stora) + 90, 0, "sharifi.mohammadreza@mail.um.ac.ir");
                 al_draw_text(font4, al_map_rgb(7, 3, 61), 20, kola + (6 * stora) + 90, 0, "https://t.me/Maresha82");
-                al_draw_text(font,al_map_rgb(78, 5, 5),720,480,0,temp);
+                al_draw_text(font, al_map_rgb(78, 5, 5), 720, 480, 0, temp);
                 al_flip_display();
-                
             }
             goto MAIN;
         }
@@ -1538,10 +1537,31 @@ OONJA:
             if (single == 1)
             {
                 sugge(player1);
+                int x = player1.pox;
+                int y = player1.poy;
+                int torvalds;
+                torvalds = minimax(player1.pox, player1.poy, dmap);
+                if (torvalds == 1)
+                {
+                    al_draw_filled_rectangle((90 * y) + 155, (90 * (x - 1)) + 65.5, (90 * y) + 234, (90 * (x - 1)) + 145.4, al_map_rgb(134, 155, 15));
+                }
+                else if (torvalds == 2)
+                {
+                    al_draw_filled_rectangle((90 * y) + 155, (90 * (x + 1)) + 65.5, (90 * y) + 234, (90 * (x + 1)) + 145.4, al_map_rgb(134, 155, 15));
+                }
+                else if (torvalds == 3)
+                {
+                    al_draw_filled_rectangle((90 * (y-1)) + 155, (90 * (x)) + 65.5, (90 * (y-1)) + 234, (90 * (x)) + 145.4, al_map_rgb(134, 155, 15));
+                }
+                else if (torvalds == 4)
+                {
+                    al_draw_filled_rectangle((90 * (y+1)) + 155, (90 * (x)) + 65.5, (90 * (y+1)) + 234, (90 * (x)) + 145.4, al_map_rgb(134, 155, 15));
+                }
             }
             al_draw_filled_rectangle((zar * ty) + 155, (zar * tx) + 65.5, (zar * ty) + 234, (zar * tx) + 145.4, al_map_rgb(164, 164, 168));
             al_draw_filled_rectangle((zar * oy) + 155, (zar * ox) + 65.5, (zar * oy) + 234, (zar * ox) + 145.4, al_map_rgb(164, 164, 168));
 
+            
             al_draw_text(font3, al_map_rgb(87, 1, 1), (90 * oy) + 180, (90 * ox) + 55, 0, "1");
             al_draw_text(font3, al_map_rgb(6, 2, 65), (90 * ty) + 180, (90 * tx) + 55, 0, "2");
             al_draw_text(font1, al_map_rgb(206, 193, 7), 10, 5, 0, "Honor");
