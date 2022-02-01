@@ -485,9 +485,7 @@ int main()
                 //*************************************************
                 fscanf(kurwa, "%s", w);
                 t1 = dhash(w);
-                printf("%d\n", t1);
                 single = t1;
-                printf("%d\n", single);
                 ///*****************************************
                 fscanf(kurwa, "%s", w);
                 strcpy(player1.name, w);
@@ -1020,9 +1018,7 @@ OONJA:
                             //*************************************************
                             fscanf(kurwa, "%s", w);
                             t1 = dhash(w);
-                            printf("%d\n", t1);
                             single = t1;
-                            printf("%d\n", single);
                             ///*****************************************
                             fscanf(kurwa, "%s", w);
                             strcpy(player1.name, w);
@@ -1349,7 +1345,6 @@ OONJA:
                             fscanf(kurwa, "%s", w);
                             t1 = dhash(w);
                             player1.damage = t1;
-                            //printf("lllllllllllllll");
                             fscanf(kurwa, "%s", w);
                             t1 = dhash(w);
                             player1.honnor = t1;
@@ -1384,9 +1379,7 @@ OONJA:
                             //*************************************************
                             fscanf(kurwa, "%s", w);
                             t1 = dhash(w);
-                            printf("%d\n", t1);
                             single = t1;
-                            printf("%d\n", single);
                             ///*****************************************
                             fscanf(kurwa, "%s", w);
                             strcpy(player1.name, w);
@@ -1513,8 +1506,6 @@ OONJA:
                 {
                     al_draw_rectangle(fx, fy, fx + lenght, fy + lenght, al_map_rgb(62, 78, 2), thickness);
                     char alpha[10];
-                    sprintf(alpha, "%d", dmap[i][j]);
-                    al_draw_text(font, al_map_rgb(255, 255, 255), fx + (lenght) / 2, fy + (lenght) / 2, 0, alpha);
                     fx += lenght;
                 }
                 fx -= 6 * lenght;
@@ -1727,12 +1718,3 @@ int max(int a, int b)
     else
         return b;
 }
-
-
-
-
-
-
-
-
-
