@@ -9,7 +9,7 @@
 #include <string.h>
 #include "hash.c"
 
-void must_init(bool test, const char *description)
+void must_init(bool test, const char *description) //init function
 {
     if (test)
         return;
@@ -17,16 +17,18 @@ void must_init(bool test, const char *description)
     printf("couldn't initialize %s\n", description);
     exit(1);
 }
-int max(int a, int b);
-int minimax(int x, int y, int map[6][6]);
-struct hero
+int max(int a, int b); //just return max
+int minimax(int x, int y, int map[6][6]); // Surprise??
+// this game has a simple Ai algorithm for single players
+
+struct hero  // Say hi to OOP :)
 {
     int honnor;
     int house_health;
     int damage;
     char name[20];
 };
-struct player
+struct player  // say it Louder :)
 {
     int honnor;
     int house_health;
@@ -35,7 +37,7 @@ struct player
     int pox; // to define the position of the players
     int poy;
 };
-int sugge(struct player c1)
+int sugge(struct player c1)   //mechanism for suggesting available cells to players
 {
     int x, y;
     x = c1.pox;
@@ -52,6 +54,7 @@ int sugge(struct player c1)
     return 0;
 }
 
+// Hashable Saving Protocol
 void saveprotocol(struct player a, struct player b, int map[6][6], int single)
 {
     FILE *castola;
@@ -110,11 +113,13 @@ void saveprotocol(struct player a, struct player b, int map[6][6], int single)
 
     fclose(castola);
 }
+int *Dijkstra(struct player a, int map[6][6]);
+// Fuuny Mechanism Hyper hint :)
 
 int main()
 {
-    must_init(al_init(), "allegro");
-    must_init(al_install_keyboard(), "keyboard");
+    must_init(al_init(), "allegro"); //dont touch this
+    must_init(al_install_keyboard(), "keyboard"); //and this
     must_init(al_init_primitives_addon(), "primitives");
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / 30.0);
     must_init(timer, "timer");
@@ -126,6 +131,8 @@ int main()
     must_init(disp, "display");
     al_init_font_addon();
     al_init_ttf_addon();
+    //until here
+    //initializing Prerequisite
     ALLEGRO_FONT *font = al_load_font("reza.ttf", 72, 0);
     ALLEGRO_FONT *font1 = al_load_font("rez.ttf", 30, 0);
     ALLEGRO_FONT *font2 = al_load_font("f1.ttf", 50, 0);
@@ -166,7 +173,7 @@ int main()
     must_init(ws, "WarScence");
     must_init(btf, "Battlefield");
     must_init(battlefi, "final");
-
+    //Now Our heros
     struct hero hitler;
     hitler.damage = 7;
     hitler.house_health = 2000;
@@ -193,31 +200,35 @@ int main()
     struct player player2;
     player2.pox = 5;
     player2.poy = 5;
-
+    ///////////First point map
     int dmap[6][6] = {{0, 6, 0, 1, 8, 0},
                       {0, 7, 0, 2, 3, 0},
                       {9, 9, 2, 7, 0, 4},
                       {2, 0, 5, 6, 8, 3},
                       {3, 4, 0, 1, 2, 7},
                       {2, 8, 5, 0, 5, 0}};
-
+    ////Dont touch it :)
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
     al_register_event_source(queue, al_get_timer_event_source(timer));
+
+    ///Some Important variables
     int nobat = 1;
     int vaziat = 0;
-    bool done = false;
+    bool done = false; // to stop the game
     bool redraw = true;
-    int single = 1;
-    ALLEGRO_EVENT event;
+    int single = 1;  //for defining single player match
+    int hint = 0; ///get hint
+    int abar_hint = 0;  //get hyper hint
+    ALLEGRO_EVENT event;  //event
     int fti = 0;
-    ALLEGRO_KEYBOARD_STATE ks;
+    ALLEGRO_KEYBOARD_STATE ks;  //get keyboard state
     al_start_timer(timer);
-    time_t start = clock(), end = clock();
-    int wpi = 0;
-    char sto[20];
+    time_t start = clock(), end = clock(); // i'll told you what it is :)
+    int wpi = 0;  //to define a good mechanism
+    char sto[20]; //it's temp don't belive it 
     while (1)
-    { //Main Menu
+    { //Welcome Page
         int dmap[6][6] = {{0, 6, 0, 1, 8, 0},
                           {0, 7, 0, 2, 3, 0},
                           {9, 9, 2, 7, 0, 4},
@@ -278,15 +289,15 @@ int main()
 
     int elatsa = 1;
     while (1)
-    {
+    {    ///Main Menu
 
         al_draw_bitmap(mana, -200, -100, 0);
-        int elatsa = 1;
+        int elatsa = 1; //this variable can perform the wheeling mode of the menu
 
         while (!al_key_down(&ks, ALLEGRO_KEY_SPACE))
         {
 
-            int i = 198;
+            int i = 198;   //red and yellow color
             int j = 231;
             int k = 7;
             int ho1, ho2, step;
@@ -338,7 +349,7 @@ int main()
             } //switch
             al_draw_bitmap(mana, -200, -100, 0);
             if (elatsa == 1)
-            {
+            {   //Selecting Mechanism
 
                 al_draw_text(font, al_map_rgb(m, n, o), ho1, ho2, 0, "Single Player");
                 al_draw_text(font, al_map_rgb(i, j, k), ho1, ho2 + step, 0, "Multi Player");
@@ -413,12 +424,12 @@ int main()
             while (end - start < 400000)
             {
                 int kola, stora;
-                kola = 20;
+                kola = 20;   //kola and stora are variables that can manage UI
                 stora = 80;
                 char temp[10];
                 int timee;
                 end = clock();
-                timee = 10 - ((end - start) / 40000);
+                timee = 10 - ((end - start) / 40000); //count down mechanism
 
                 sprintf(temp, "%d", timee);
                 al_clear_to_color(al_map_rgb(31, 199, 87));
@@ -436,6 +447,7 @@ int main()
         }
         else if (elatsa == 3)
         {
+            //Loading Mechanism
             if (1 == 1)
             {
                 FILE *kurwa;
@@ -527,6 +539,7 @@ int main()
     }
 
 NAMI:
+//Choosing Methods
     wpi = 1;
     al_get_keyboard_state(&ks);
     while (1)
@@ -748,6 +761,8 @@ OONJA:
                             dmap[player1.pox][player1.poy] = (dmap[player1.pox][player1.poy] + clock() % 5) % 10;
                         }
                         nobat = 2;
+                        hint = 0;
+                        abar_hint = 0;
 
                     } /////it can goes up
                     else
@@ -781,6 +796,8 @@ OONJA:
                             dmap[player1.pox][player1.poy] = (dmap[player1.pox][player1.poy] + clock() % 5) % 10;
                         }
                         nobat = 2;
+                        hint = 0;
+                        abar_hint = 0;
 
                     } /////it can goes down
                     else
@@ -815,6 +832,8 @@ OONJA:
                             dmap[player1.pox][player1.poy] = (dmap[player1.pox][player1.poy] + clock() % 4) % 10;
                         }
                         nobat = 2;
+                        hint = 0;
+                        abar_hint = 0;
 
                     } /////it can goes left
                     else
@@ -848,6 +867,8 @@ OONJA:
                             dmap[player1.pox][player1.poy] = (dmap[player1.pox][player1.poy] + clock() % 4) % 10;
                         }
                         nobat = 2;
+                        hint = 0;
+                        abar_hint = 0;
                     } /////it can goes right
                     else
                     {
@@ -1050,7 +1071,27 @@ OONJA:
                     player1.damage /= 2;
                     player1.honnor /= 3;
                     nobat = 2;
+                    hint = 0;
+                    abar_hint = 0;
                     key[ALLEGRO_KEY_L] = 0;
+                }
+                if (key[ALLEGRO_KEY_H])
+                {
+                    if (single == 1)
+                    {
+                        hint = 1;
+
+                        start = clock();
+                        player1.house_health -= 10;
+                    }
+                }
+                if (key[ALLEGRO_KEY_T])
+                {
+                    if (single == 1)
+                    {
+                        abar_hint = 1;
+                        player1.house_health -= 12;
+                    }
                 }
 
                 for (int i = 0; i < ALLEGRO_KEY_MAX; i++)
@@ -1442,7 +1483,11 @@ OONJA:
             int damage2 = player2.damage;
             int honnor2 = player2.honnor;
             temp = minimax(cx, cy, dmap);
-            if (honnor2 * damage2 >= 1382)
+            int health1;
+            health1=player1.house_health;
+            health1*=5;
+            health1/=6;   //serie hendsi
+            if (honnor2 * damage2 >= 382)
             {
                 player1.house_health -= (honnor2 * damage2);
                 player2.damage /= 2;
@@ -1540,28 +1585,62 @@ OONJA:
                 int x = player1.pox;
                 int y = player1.poy;
                 int torvalds;
-                torvalds = minimax(player1.pox, player1.poy, dmap);
-                if (torvalds == 1)
+
+                if (hint == 1)
                 {
-                    al_draw_filled_rectangle((90 * y) + 155, (90 * (x - 1)) + 65.5, (90 * y) + 234, (90 * (x - 1)) + 145.4, al_map_rgb(134, 155, 15));
+                    torvalds = minimax(player1.pox, player1.poy, dmap);
+                    if (torvalds == 1)
+                    {
+                        al_draw_filled_rectangle((90 * y) + 155, (90 * (x - 1)) + 65.5, (90 * y) + 234, (90 * (x - 1)) + 145.4, al_map_rgb(134, 155, 15));
+                    }
+                    else if (torvalds == 2)
+                    {
+                        al_draw_filled_rectangle((90 * y) + 155, (90 * (x + 1)) + 65.5, (90 * y) + 234, (90 * (x + 1)) + 145.4, al_map_rgb(134, 155, 15));
+                    }
+                    else if (torvalds == 3)
+                    {
+                        al_draw_filled_rectangle((90 * (y - 1)) + 155, (90 * (x)) + 65.5, (90 * (y - 1)) + 234, (90 * (x)) + 145.4, al_map_rgb(134, 155, 15));
+                    }
+                    else if (torvalds == 4)
+                    {
+                        al_draw_filled_rectangle((90 * (y + 1)) + 155, (90 * (x)) + 65.5, (90 * (y + 1)) + 234, (90 * (x)) + 145.4, al_map_rgb(134, 155, 15));
+                    }
                 }
-                else if (torvalds == 2)
+                int *tor;
+                tor = Dijkstra(player1, dmap);
+                if (abar_hint == 1)
                 {
-                    al_draw_filled_rectangle((90 * y) + 155, (90 * (x + 1)) + 65.5, (90 * y) + 234, (90 * (x + 1)) + 145.4, al_map_rgb(134, 155, 15));
-                }
-                else if (torvalds == 3)
-                {
-                    al_draw_filled_rectangle((90 * (y-1)) + 155, (90 * (x)) + 65.5, (90 * (y-1)) + 234, (90 * (x)) + 145.4, al_map_rgb(134, 155, 15));
-                }
-                else if (torvalds == 4)
-                {
-                    al_draw_filled_rectangle((90 * (y+1)) + 155, (90 * (x)) + 65.5, (90 * (y+1)) + 234, (90 * (x)) + 145.4, al_map_rgb(134, 155, 15));
+
+                    for (int i = 0; i < 5; i++)
+                    {
+                        torvalds = tor[i];
+                        if (torvalds == 1)
+                        {
+                            x -= 1;
+                            al_draw_filled_rectangle((90 * y) + 155, (90 * (x)) + 65.5, (90 * y) + 234, (90 * (x)) + 145.4, al_map_rgb(134, 155, 15));
+                        }
+                        else if (torvalds == 2)
+                        {
+                            x += 1;
+                            al_draw_filled_rectangle((90 * y) + 155, (90 * (x)) + 65.5, (90 * y) + 234, (90 * (x)) + 145.4, al_map_rgb(134, 155, 15));
+                        }
+                        else if (torvalds == 3)
+                        {
+                            y -= 1;
+                            al_draw_filled_rectangle((90 * y) + 155, (90 * (x)) + 65.5, (90 * y) + 234, (90 * (x)) + 145.4, al_map_rgb(134, 155, 15));
+                        }
+                        else if (torvalds == 4)
+                        {
+                            y += 1;
+                            al_draw_filled_rectangle((90 * y) + 155, (90 * (x)) + 65.5, (90 * y) + 234, (90 * (x)) + 145.4, al_map_rgb(134, 155, 15));
+                        }
+                    }
                 }
             }
             al_draw_filled_rectangle((zar * ty) + 155, (zar * tx) + 65.5, (zar * ty) + 234, (zar * tx) + 145.4, al_map_rgb(164, 164, 168));
             al_draw_filled_rectangle((zar * oy) + 155, (zar * ox) + 65.5, (zar * oy) + 234, (zar * ox) + 145.4, al_map_rgb(164, 164, 168));
 
-            
+
             al_draw_text(font3, al_map_rgb(87, 1, 1), (90 * oy) + 180, (90 * ox) + 55, 0, "1");
             al_draw_text(font3, al_map_rgb(6, 2, 65), (90 * ty) + 180, (90 * tx) + 55, 0, "2");
             al_draw_text(font1, al_map_rgb(206, 193, 7), 10, 5, 0, "Honor");
@@ -1577,6 +1656,10 @@ OONJA:
                 al_draw_text(font2, al_map_rgb(6, 248, 99), 40, 240, 0, sto);
                 sprintf(sto, "%d", player1.damage);
                 al_draw_text(font2, al_map_rgb(206, 4, 4), 40, 290 + 20, 0, sto);
+                if (hint == 1)
+                    al_draw_text(font1, al_map_rgb(245, 3, 3), 10, 625, 0, "Hints will decrease your helth!");
+                if (abar_hint == 1)
+                    al_draw_text(font2, al_map_rgb(245, 3, 3), 180, 610, 0, "Hyper hint needs a Chance :)");
             }
             if (2 == 2) ///score board 2
             {
@@ -1591,6 +1674,12 @@ OONJA:
             }
 
             al_flip_display();
+            end = clock();
+            if (end - start >= 100)
+            {
+                key[ALLEGRO_KEY_H] = 0;
+            }
+            key[ALLEGRO_KEY_T] = 0;
 
             redraw = false;
         }
@@ -1743,4 +1832,36 @@ int max(int a, int b)
         return a;
     else
         return b;
+}
+int *Dijkstra(struct player a, int map[6][6])
+{
+    int x = a.pox;
+    int y = a.poy;
+    int t, array[5], counter = 0;
+    while (counter < 5)
+    {
+        t = minimax(x, y, map);
+        array[counter] = t;
+        if (t == 1)
+        {
+            x -= 1;
+        }
+        else if (t == 2)
+        {
+            x += 1;
+        }
+        else if (t == 3)
+        {
+            y -= 1;
+        }
+        else if (t == 4)
+        {
+            y += 1;
+        }
+        counter++;
+    }
+
+    int *sut;
+    sut = array;
+    return sut;
 }
